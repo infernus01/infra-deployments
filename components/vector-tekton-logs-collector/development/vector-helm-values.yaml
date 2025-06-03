@@ -67,12 +67,21 @@ customConfig:
         when_full: "block"
       batch:
         max_bytes: 10485760
-        timeout_secs: 300  # default
+        timeout_secs: 300 # default
       inputs: ["remap_app_logs"]
       compression: "none"
       endpoint: ${ENDPOINT}
-      # tls:
-      #   verify_certificate: false
+      tls:
+        verify_certificate: false
+      auth:
+        access_key_id: ${AWS_ACCESS_KEY_ID}
+        secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+      force_path_style_access: true
+      healthcheck:
+        enabled: false
+      acl: private
+      retry_initial_backoff_secs: 1
+      retry_max_duration_secs: 10
       encoding:
         codec: "text"
       key_prefix: "/logs/{{ `{{ .namespace }}` }}/{{`{{ .result }}`}}/{{`{{ .taskRunUID }}`}}/{{`{{ .container }}`}}"
@@ -118,15 +127,15 @@ securityContext:
   allowPrivilegeEscalation: false
   capabilities:
     drop:
-    - CHOWN
-    - DAC_OVERRIDE
-    - FOWNER
-    - FSETID
-    - KILL
-    - NET_BIND_SERVICE
-    - SETGID
-    - SETPCAP
-    - SETUID
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - FSETID
+      - KILL
+      - NET_BIND_SERVICE
+      - SETGID
+      - SETPCAP
+      - SETUID
   readOnlyRootFilesystem: true
   seLinuxOptions:
     type: spc_t
